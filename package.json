@@ -1,0 +1,21 @@
+{
+  "name": "express-routes-helper",
+  "version": "1.0.0",
+  "description": "inpired in routes of rails project",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test mocha"
+  },
+  "keywords": [
+    "routes",
+    "helper",
+    "init",
+    "configs"
+  ],
+  "dependencies": {
+    "decamelize": "^1.2.0",
+    "underscore": "*"
+  },
+  "author": "Luiz Zamboni",
+  "license": "ISC"
+}
