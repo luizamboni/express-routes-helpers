@@ -3,14 +3,14 @@
 const _ = require("underscore")
 const decamelize = require("decamelize")
 
-let startMiddlewaresFor = rInfo => rInfo.startMid
-                                 ? _.map(rInfo.startMid,
-                                         middfName => require(`../../middlewares/${middfName}`))
-                                 : null
+let startMiddlewaresFor = rInfo => {
+  if (rInfo.startMid)
+    return _(rInfo.startMid).map(middfName => require(`../../middlewares/${middfName}`))
+}
 
 
 /**
- * buil url helpers and insert in express app
+ * build url helpers and insert in express app
  */
 let buildUrlHelpers = (app, config) => {
   let host = config.host
@@ -21,7 +21,7 @@ let buildUrlHelpers = (app, config) => {
 
   let urlHelpers = app.get("urlhelpers")
 
-  _.each(routes, rInfo => {
+  routes.forEach(rInfo => {
     /* build helper method names */
     let actionName = rInfo.action.charAt(0).toUpperCase() + rInfo.action.slice(1)
     let methodName = `${rInfo.controller.replace("Controller", "")}${actionName}Url`
@@ -29,15 +29,15 @@ let buildUrlHelpers = (app, config) => {
     /*build methods */
     urlHelpers[methodName] = params => {
       let path = rInfo.path
-      _.each(params, (v, k) => {
+      params.forEach((v, k) => {
         path = path.replace(`:${k}`, v)
       })
-      return  `${host}${path}`
+      return `${host}${path}`
     }
   })
 
   if(config.debug)
-    _.each(urlHelpers, (func, mName) => {
+    urlHelpers.forEach((func, mName) => {
       console.log(`${mName}(opts)\t\t\t\t\t\thelper genereted`)
     })
 }
@@ -53,7 +53,7 @@ let buildRoutes = (app, config) => {
   if(frontMiddlewares)
     app.use(frontMiddlewares)
 
-  _.each(routes, rInfo => {
+  routes.forEach(rInfo => {
 
     /*
      * http verb, corresponding to express route methods,
@@ -67,12 +67,12 @@ let buildRoutes = (app, config) => {
      */
 
     let handler = require(`${controllersPath}/${decamelize(rInfo.controller, "-")}`)[rInfo.action]
-    let endPoint = _.compact( [ startMiddlewaresFor(rInfo), handler ])
+    let endPoint = _.compact([ startMiddlewaresFor(rInfo), handler ])
 
     app[httpVerb](rInfo.path, endPoint)
   })
 
-  /*apply default end middlewares */
+  /* apply default end middlewares */
   if(endMiddlewares)
     app.use(endMiddlewares)
 }
@@ -102,7 +102,7 @@ module.exports = ExpressRoutesHelper
  *
  * const ExpressRoutesHelper = require("express-routes-helper")
  *
- * ExpressRoutesHelper.init(app)
- * ExpressRoutesHelper.build(config)
+ * let expressRoutesHelper = new ExpressRoutesHelper(app)
+ * expressRoutesHelper.build(config)
  *
  */
