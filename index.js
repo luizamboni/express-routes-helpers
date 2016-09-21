@@ -37,9 +37,8 @@ let buildUrlHelpers = (app, config) => {
   })
 
   if(config.debug)
-    urlHelpers.forEach((func, mName) => {
+    for(let mName in urlHelpers)
       console.log(`${mName}(opts)\t\t\t\t\t\thelper genereted`)
-    })
 }
 
 
