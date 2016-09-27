@@ -2,6 +2,8 @@
 
 const _ = require("underscore")
 const decamelize = require("decamelize")
+const camelcase = require("camelcase")
+const upperCamelCase = require("uppercamelcase")
 
 let startMiddlewaresFor = rInfo => {
   if (rInfo.startMid)
@@ -21,15 +23,23 @@ let buildUrlHelpers = (app, config) => {
   let urlHelpers = app.get("urlhelpers")
 
   routes.forEach(rInfo => {
+
+    let methodName
     /* build helper method names */
-    let actionName = rInfo.action.charAt(0).toUpperCase() + rInfo.action.slice(1)
-    let methodName = `${rInfo.controller.replace("Controller", "")}${actionName}Url`
+    if(rInfo.to){
+      let pathSplited = rInfo.to.split("#")
+      methodName = upperCamelCase(`${pathSplited[0]}_${pathSplited[1]}_Url`)
+    } else {
+      let ctrlName = rInfo.controller.replace("Controller", "")
+      methodName = upperCamelCase(`${ctrlName}_${rInfo.action}_Url`)
+    }
 
     /*build methods */
     urlHelpers[methodName] = params => {
       params = params ? params : {}
       let path = rInfo.path
       _.each(params, (v, k) => {
+        console.log(k,v)
         path = path.replace(`:${k}`, v)
       })
       return `${host}${path}`
@@ -58,17 +68,28 @@ let buildRoutes = (app, config) => {
      * http verb, corresponding to express route methods,
      * becouse this. "ALL" must works too like Route#all
      */
-    let httpVerb = rInfo.method.toLowerCase()
+    let httpVerb =  rInfo.from ? rInfo.from.split(" ")[0] : rInfo.method
+    httpVerb = httpVerb.toLowerCase()
+
+    /*
+    * path to resource
+    */
+    let path = rInfo.from ? rInfo.from.split(" ")[1] : rInfo.path
 
     /*
      * object#method to handle this endpoint
      * lets assume that you need have a controllers folder
      */
+    let handler
+    if(rInfo.to){
+      let ctrlFileName = `${rInfo.to.split("#")[0]}-controller`
+      let actionName = rInfo.to.split("#")[1]
+      handler = require(`${controllersPath}/${ctrlFileName}`)[actionName]
+    }else
+      handler = require(`${controllersPath}/${decamelize(rInfo.controller, "-")}`)[rInfo.action]
 
-    let handler = require(`${controllersPath}/${decamelize(rInfo.controller, "-")}`)[rInfo.action]
     let endPoint = _.compact([ startMiddlewaresFor(rInfo), handler ])
-
-    app[httpVerb](rInfo.path, endPoint)
+    app[httpVerb](path, endPoint)
   })
 
   /* apply default end middlewares */
