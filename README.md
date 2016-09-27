@@ -10,12 +10,6 @@ module.exports = {
   routes: [
     { from: "GET /page/:slug/:id", to: "pages#show" },
     { method: "GET",
-      path: "/exercicio-resolvidos/:slug/:id/pagina/:page",
-      controller: "TagsController",
-      action: "show"
-    },
-    { from: "GET /disciplina/:slug/tag", to: "tags#show"  },
-    { method: "GET",
       path: "/",
       controller: "PagesController",
       action: "welcome"
