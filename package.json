@@ -13,8 +13,10 @@
     "configs"
   ],
   "dependencies": {
+    "camelcase": "^3.0.0",
     "decamelize": "^1.2.0",
-    "underscore": "*"
+    "underscore": "*",
+    "uppercamelcase": "^1.1.0"
   },
   "author": "Luiz Zamboni",
   "license": "ISC"
