@@ -8,7 +8,6 @@ let startMiddlewaresFor = rInfo => {
     return _(rInfo.startMid).map(middfName => require(`../../middlewares/${middfName}`))
 }
 
-
 /**
  * build url helpers and insert in express app
  */
@@ -28,8 +27,9 @@ let buildUrlHelpers = (app, config) => {
 
     /*build methods */
     urlHelpers[methodName] = params => {
+      params = params ? params : {}
       let path = rInfo.path
-      params.forEach((v, k) => {
+      _.each(params, (v, k) => {
         path = path.replace(`:${k}`, v)
       })
       return `${host}${path}`
