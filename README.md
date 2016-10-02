@@ -17,6 +17,14 @@ module.exports = {
   ]
 }
 ```
+## route parameters
+## as
+use `as` key to overwrite a function name
+```javascript
+  { from: "GET /page/:slug/:id", to: "pages#show", as: "myCustomName" },
+```
+it will generate a method `myCustomNameUrl({url , id})` instead `pagesShowUrl({url , id})`
+
 
 ## init in express
 ```javascript
@@ -26,3 +34,6 @@ let expressRoutesHelper = new ExpressRoutesHelper(app)
 expressRoutesHelper.build(config)
 
 ```
+
+# ChangeLogs
+- `2016-10-02` added support to `as` parameter in config route name function
