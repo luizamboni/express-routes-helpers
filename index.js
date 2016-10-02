@@ -26,23 +26,31 @@ let buildUrlHelpers = (app, config) => {
 
     let methodName
     /* build helper method names */
-    if(rInfo.to){
+    /* custom method Name */
+    if(rInfo.as){
+      methodName =  `${rInfo.as}Url`
+    /* to: "controller#action" syntax*/
+    }else if(rInfo.to){
       let pathSplited = rInfo.to.split("#")
-      methodName = upperCamelCase(`${pathSplited[0]}_${pathSplited[1]}_Url`)
+      methodName = camelcase(`${pathSplited[0]}_${pathSplited[1]}_Url`)
+    /* by all parameters */
     } else {
       let ctrlName = rInfo.controller.replace("Controller", "")
-      methodName = upperCamelCase(`${ctrlName}_${rInfo.action}_Url`)
+      methodName = camelcase(`${ctrlName}_${rInfo.action}_Url`)
     }
 
-    /*build methods */
-    urlHelpers[methodName] = params => {
-      params = params ? params : {}
-      let path = rInfo.path
-      _.each(params, (v, k) => {
-        console.log(k,v)
-        path = path.replace(`:${k}`, v)
-      })
-      return `${host}${path}`
+    /* build methods */
+    if(!urlHelpers[methodName]){
+      urlHelpers[methodName] = params => {
+        params = params ? params : {}
+        let path = rInfo.path || rInfo.from.split(" ")[1]
+        _.each(params, (v, k) => {
+          console.log(k,v)
+          debugger
+          path = path.replace(`:${k}`, v)
+        })
+        return `${host}${path}`
+      }
     }
   })
 
@@ -126,3 +134,4 @@ module.exports = ExpressRoutesHelper
  * expressRoutesHelper.build(config)
  *
  */
+
