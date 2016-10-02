@@ -18,7 +18,8 @@ module.exports = {
 }
 ```
 ## route parameters
-use **to** key to specify a pair **controller#method**
+use **to** key to specify a pair **controller#method**.
+
 use **from** to specify a pair **http verb** (or any express route method) and **path**
 ```javascript
 /* Example
