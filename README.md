@@ -18,10 +18,20 @@ module.exports = {
 }
 ```
 ## route parameters
-## as
-use `as` key to overwrite a function name
+use **to** key to specify a pair **controller#method**
+use **from** to specify a pair **http verb** (or any express route method) and **path**
 ```javascript
-  { from: "GET /page/:slug/:id", to: "pages#show", as: "myCustomName" },
+/* Example
+* this will set get path with pattern ""/page/:slug/:id"
+* use module exported in controllers/pages-controller.js
+* in method show(req, res)
+*/
+{ from: "GET /page/:slug/:id", to: "pages#show" },
+```
+
+use **as** key to overwrite a function name
+```javascript
+{ from: "GET /page/:slug/:id", to: "pages#show", as: "myCustomName" },
 ```
 it will generate a method `myCustomNameUrl({url , id})` instead `pagesShowUrl({url , id})`
 
@@ -36,4 +46,4 @@ expressRoutesHelper.build(config)
 ```
 
 # ChangeLogs
-- `2016-10-02` added support to `as` parameter in config route name function
+- `2016-10-02` added support to **as** parameter in config route name function
