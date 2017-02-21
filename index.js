@@ -41,14 +41,20 @@ let buildUrlHelpers = (app, config) => {
 
     /* build methods */
     if(!urlHelpers[methodName]){
-      urlHelpers[methodName] = params => {
+      urlHelpers[methodName] = (...params) => {
         params = params ? params : {}
         let path = rInfo.path || rInfo.from.split(" ")[1]
-        _.each(params, (v, k) => {
-          console.log(k,v)
-          debugger
-          path = path.replace(`:${k}`, v)
-        })
+
+        if(params[0].constructor === Object){
+          _.each(params[0], (v, k) => {
+            path = path.replace(`:${k}`, v)
+          })
+        } else {
+          _.each(params, (v) => 
+            path = path.replace(/:\w*/, v)
+          )
+        }
+
         return `${host}${path}`
       }
     }
